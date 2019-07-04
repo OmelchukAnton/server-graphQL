@@ -1,9 +1,11 @@
 const Dates = [
     {
-      date: new Date(1991, 11, 24)
+    	username: "Anton",
+        date: new Date(1994, 11, 24),
     },
     {
-      date: new Date()
+    	username: "1",
+        date: new Date(),
     }
   ];
   

@@ -4,6 +4,8 @@ let {
     GraphQLString,
     GraphQLList,
     GraphQLObjectType,
+    GraphQLNonNull,
+    GraphQLBoolean,
     GraphQLSchema
 } = require('graphql');
 
@@ -13,33 +15,55 @@ let {
   	GraphQLDateTime
 } = require('graphql-iso-date');
 
+
+
+
 const DateType = new GraphQLObjectType({
-	name: 'Query',
-	description: "This represent an author",
+	name: 'QueryDate',
 	fields: () => ({
+		username: {type: GraphQLString},
     	date: {type: GraphQLDate}
   	})
 });
 
 
-const BlogQueryRootType = new GraphQLObjectType({
-  name: 'BlogAppSchema',
-  description: "Blog Application Schema Query Root",
-  fields: () => ({
-    dates: {
-      type: new GraphQLList(DateType),
-      description: "List of all Dates",
-      resolve: function() {
-        return Dates
-      }
-    }
-  })
+// const Mutation = new GraphQLObjectType({
+// 	name: 'Mutation',
+// 	fields: () => {
+// 		setTime: {
+// 			type: DateType,
+// 			args: {
+// 				username: { type: GraphQLString },
+// 				date: { type: GraphQLString }
+// 			},
+// 			resolve(parent, args) {
+// 				const newOrder = new DateType({
+// 					username: args.username,
+// 					date: args.date,
+// 				});
+// 				newOrder.save();
+// 			}
+// 		}
+// 	}
+// })
+
+const QueryRootType = new GraphQLObjectType({
+	name: 'Query',
+	fields: () => ({
+		getTime: {
+			type: DateType,
+			args: { username: { type: GraphQLString }},
+			resolve(parent, args) {
+				return Dates.find(time => time.username === args.username);
+			}
+		}
+	})
 });
 
 
-const BlogAppSchema = new GraphQLSchema({
-    query: BlogQueryRootType
+const AppSchema = new GraphQLSchema({
+    query: QueryRootType,
 });
 
 
-module.exports = BlogAppSchema;
+module.exports = AppSchema;
