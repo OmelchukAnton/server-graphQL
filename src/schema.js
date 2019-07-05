@@ -1,12 +1,11 @@
-const Dates = require('./data/dates');
+const Data = require(`../models/data`)
 
 let {
     GraphQLString,
-    GraphQLList,
     GraphQLObjectType,
-    GraphQLNonNull,
     GraphQLBoolean,
-    GraphQLSchema
+    GraphQLSchema,
+	GraphQLID
 } = require('graphql');
 
 let {
@@ -16,45 +15,44 @@ let {
 } = require('graphql-iso-date');
 
 
-
-
 const DateType = new GraphQLObjectType({
-	name: 'QueryDate',
+	name: 'Data',
 	fields: () => ({
+		id: { type: GraphQLID },
 		username: {type: GraphQLString},
     	date: {type: GraphQLDate}
   	})
 });
 
 
-// const Mutation = new GraphQLObjectType({
-// 	name: 'Mutation',
-// 	fields: () => {
-// 		setTime: {
-// 			type: DateType,
-// 			args: {
-// 				username: { type: GraphQLString },
-// 				date: { type: GraphQLString }
-// 			},
-// 			resolve(parent, args) {
-// 				const newOrder = new DateType({
-// 					username: args.username,
-// 					date: args.date,
-// 				});
-// 				newOrder.save();
-// 			}
-// 		}
-// 	}
-// })
+const Mutation = new GraphQLObjectType({
+	name: 'Mutation',
+	fields: () => ({
+		setTime: {
+			type: DateType,
+			args: {
+				username: { type: GraphQLString },
+				date: { type: GraphQLString }
+			},
+			resolve(parent, args) {
+				let newOrder = new Data({
+					username: args.username,
+					date: args.date,
+				});
+				newOrder.save();
+			}
+		}
+	})
+});
 
-const QueryRootType = new GraphQLObjectType({
+const Query = new GraphQLObjectType({
 	name: 'Query',
 	fields: () => ({
 		getTime: {
 			type: DateType,
-			args: { username: { type: GraphQLString }},
+			args: { id: { type: GraphQLID }},
 			resolve(parent, args) {
-				return Dates.find(time => time.username === args.username);
+				return Data.findById(args.id);
 			}
 		}
 	})
@@ -62,7 +60,8 @@ const QueryRootType = new GraphQLObjectType({
 
 
 const AppSchema = new GraphQLSchema({
-    query: QueryRootType,
+    query: Query,
+    mutation: Mutation,
 });
 
 
