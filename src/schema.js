@@ -2,6 +2,7 @@ const Data = require(`../models/data`)
 
 let {
     GraphQLString,
+    GraphQLList,
     GraphQLObjectType,
     GraphQLBoolean,
     GraphQLSchema,
@@ -15,6 +16,8 @@ let {
 } = require('graphql-iso-date');
 
 
+
+
 const DateType = new GraphQLObjectType({
 	name: 'Data',
 	fields: () => ({
@@ -23,7 +26,6 @@ const DateType = new GraphQLObjectType({
     	date: {type: GraphQLDate}
   	})
 });
-
 
 const Mutation = new GraphQLObjectType({
 	name: 'Mutation',
@@ -39,7 +41,7 @@ const Mutation = new GraphQLObjectType({
 					username: args.username,
 					date: args.date,
 				});
-				newOrder.save();
+				return newOrder.save();
 			}
 		}
 	})
@@ -49,10 +51,9 @@ const Query = new GraphQLObjectType({
 	name: 'Query',
 	fields: () => ({
 		getTime: {
-			type: DateType,
-			args: { id: { type: GraphQLID }},
+			type: new GraphQLList(DateType),
 			resolve(parent, args) {
-				return Data.findById(args.id);
+				return Data.find({});
 			}
 		}
 	})
