@@ -55,6 +55,14 @@ const Query = new GraphQLObjectType({
 			resolve(parent, args) {
 				return Data.find({});
 			}
+		},
+
+		getUser: {
+			type: DateType,
+			args: { id: { type: GraphQLID }},
+			resolve(parent, args) {
+				return Data.findById(args.id);
+			}
 		}
 	})
 });
